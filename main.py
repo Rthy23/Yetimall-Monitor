@@ -1,17 +1,27 @@
 import streamlit as st
 import sys
-import os
 
-st.title("極簡啟動測試")
-st.write("執行環境路徑:", os.getcwd())
-st.write("Python 版本:", sys.version)
+# 1. 基礎 UI，確保伺服器有東西可以跑
+st.title("除錯模式：YetiMall Monitor")
+st.write("如果看到這行字，代表伺服器與 Port 8501 已成功連接！")
 
+# 2. 逐步檢查模組
 try:
-    st.write("準備嘗試載入資料庫模組...")
+    st.write("正在測試模組載入...")
     import cloud_db
-    st.write("✅ cloud_db.py 引入成功")
-except Exception as e:
-    st.error(f"❌ 模組載入失敗: {e}")
-    st.write("請檢查資料庫連線代碼是否有錯。")
+    st.write("✅ cloud_db 載入成功")
 
-st.success("🎉 如果看到這行，代表主程式已成功運行！")
+    import processor
+    st.write("✅ processor 載入成功")
+
+    # 測試是否可以呼叫其中的一個函數 (請根據你的實際函數名修改)
+    # st.write(cloud_db.get_db_status())
+
+except Exception as e:
+    st.error(f"❌ 程式啟動失敗，錯誤訊息如下：")
+    st.code(str(e))
+    # 印出完整的 Traceback 幫助定位
+    import traceback
+    st.text(traceback.format_exc())
+
+st.info("如果看到上面有紅色的錯誤，請把內容複製給我，我就能幫你修復！")
