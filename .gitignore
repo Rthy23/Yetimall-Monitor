@@ -57,3 +57,6 @@ makestar-monitor/scrapers/__pycache__/
 # Replit workspace files — not for Streamlit Cloud
 uv.lock
 pyproject.toml
+uv.lock
+pyproject.toml
+.replit
