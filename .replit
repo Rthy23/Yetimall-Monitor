@@ -1,8 +1,53 @@
+modules = ["python-3.12"]
 [nix]
-packages = ["streamlit"]
+packages = ["gitFull", "glibcLocales", "playwright-driver", "streamlit", "gcc", "chromium"]
+channel = "stable-25_05"
 
 [userenv]
 
 [userenv.shared]
 SUPABASE_URL = "https://dldxbxkjctonqgkrdpes.supabase.co"
 SUPABASE_KEY = "sb_publishable_4kUlPWrfMsI9wekP6W2IbQ_VY1rtGo9"
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Makestar Stock Monitor"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Makestar Dashboard"
+
+[[workflows.workflow]]
+name = "Makestar Stock Monitor"
+author = "agent"
+
+[workflows.workflow.metadata]
+outputType = "console"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd makestar-monitor && LD_PRELOAD=/lib/x86_64-linux-gnu/libstdc++.so.6 python3 monitor.py"
+
+[[workflows.workflow]]
+name = "Makestar Dashboard"
+author = "agent"
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd makestar-monitor && LD_PRELOAD=/lib/x86_64-linux-gnu/libstdc++.so.6 python3 -m streamlit run app.py --server.port 8000 --server.headless true --server.enableCORS false"
+waitForPort = 8000
+
+[[ports]]
+localPort = 8000
+externalPort = 80
