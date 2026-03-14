@@ -1,27 +1,27 @@
 import streamlit as st
 import sys
+import os
 
-# 1. 基礎 UI，確保伺服器有東西可以跑
-st.title("除錯模式：YetiMall Monitor")
-st.write("如果看到這行字，代表伺服器與 Port 8501 已成功連接！")
+st.title("極簡啟動測試 (路徑強化版)")
 
-# 2. 逐步檢查模組
+# 強制讓 Python 在目前目錄尋找檔案
+current_dir = os.path.dirname(os.path.abspath(__file__))
+if current_dir not in sys.path:
+    sys.path.append(current_dir)
+
+st.write(f"當前工作目錄: {os.getcwd()}")
+st.write(f"搜尋路徑清單: {sys.path[:3]}...") # 只顯示前三項
+
 try:
-    st.write("正在測試模組載入...")
+    st.write("準備嘗試載入資料庫模組...")
     import cloud_db
-    st.write("✅ cloud_db 載入成功")
+    st.success("✅ cloud_db.py 引入成功！")
 
-    import processor
-    st.write("✅ processor 載入成功")
-
-    # 測試是否可以呼叫其中的一個函數 (請根據你的實際函數名修改)
-    # st.write(cloud_db.get_db_status())
+    # 測試是否能讀取到 cloud_db 內的屬性（確認不是空殼）
+    st.write("模組內可用函數:", [f for f in dir(cloud_db) if not f.startswith('_')][:5])
 
 except Exception as e:
-    st.error(f"❌ 程式啟動失敗，錯誤訊息如下：")
-    st.code(str(e))
-    # 印出完整的 Traceback 幫助定位
-    import traceback
-    st.text(traceback.format_exc())
+    st.error(f"❌ 模組載入失敗: {e}")
+    st.info("如果檔案明明在 GitHub 上卻讀不到，可能是 Streamlit 快取問題。")
 
-st.info("如果看到上面有紅色的錯誤，請把內容複製給我，我就能幫你修復！")
+st.success("🎉 如果看到這行，代表主程式已成功運行！")
