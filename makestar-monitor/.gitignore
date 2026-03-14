@@ -1,5 +1,0 @@
-*.db
-screenshots/
-__pycache__/
-*.pyc
-.env
