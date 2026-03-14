@@ -1,2 +1,8 @@
 [nix]
 packages = ["streamlit"]
+
+[userenv]
+
+[userenv.shared]
+SUPABASE_URL = "https://dldxbxkjctonqgkrdpes.supabase.co"
+SUPABASE_KEY = "sb_publishable_4kUlPWrfMsI9wekP6W2IbQ_VY1rtGo9"

@@ -84,20 +84,36 @@ def write_stock_state(last_stock, last_is_purchasable, last_sale_status,
         logger.debug("Supabase write_stock_state: %s", exc)
 
 
-def write_transaction(timestamp: str, quantity: int):
+def write_transaction(
+    timestamp: str,
+    quantity: int,
+    order_id: str = None,
+    user_id: str = None,
+    country: str = None,
+    metadata: str = None,
+):
+    """
+    UPSERT 一筆訂單到 Supabase transactions 表。
+    若 order_id 已存在則累加 quantity（需在 Supabase 建立 UNIQUE constraint on order_id）。
+    """
     if not enabled():
         return
     try:
+        payload = {
+            "timestamp":    timestamp,
+            "quantity":     quantity,
+            "order_id":     order_id,
+            "user_id":      user_id,
+            "country":      country,
+            "metadata":     metadata,
+            "is_automated": 0,
+        }
+        # 移除 None 值，讓 Supabase 用欄位預設值
+        payload = {k: v for k, v in payload.items() if v is not None}
         requests.post(
             f"{SUPABASE_URL}/rest/v1/transactions",
-            headers=_h("return=minimal"),
-            json={"timestamp": timestamp, "quantity": quantity},
-            timeout=5,
-        )
-        requests.post(
-            f"{SUPABASE_URL}/rest/v1/participants",
-            headers=_h("return=minimal"),
-            json={"first_purchase_at": timestamp, "total_quantity": quantity},
+            headers=_h("resolution=merge-duplicates,return=minimal"),
+            json=payload,
             timeout=5,
         )
     except Exception as exc:

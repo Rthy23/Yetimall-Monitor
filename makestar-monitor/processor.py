@@ -289,7 +289,14 @@ def record_order(order: dict, seen: set) -> bool:
             f"qty={order['quantity']}{geo_str}  ts={order['timestamp']}"
         )
         if is_new:
-            cloud_db.write_transaction(order["timestamp"], order["quantity"])
+            cloud_db.write_transaction(
+                timestamp=order["timestamp"],
+                quantity=order["quantity"],
+                order_id=order.get("order_id"),
+                user_id=order.get("user_id"),
+                country=order.get("country"),
+                metadata=order.get("metadata"),
+            )
         return is_new
 
     except Exception as exc:
